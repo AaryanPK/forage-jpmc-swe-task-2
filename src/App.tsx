@@ -63,7 +63,7 @@ class App extends Component<{}, IState> {
 
     //Stops the updates after 10,000 iterations.
     i = i + 1;
-    if (i > 10000) {
+    if (i > 1000) {
       clearInterval(update);
     }
   }
