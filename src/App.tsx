@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import DataStreamer, { ServerRespond } from './DataStreamer';
 import Graph from './Graph';
 import './App.css';
+import {setInterval} from "timers";
 
 //Global variable to store the update interval's ID.
 let update: NodeJS.Timeout;
