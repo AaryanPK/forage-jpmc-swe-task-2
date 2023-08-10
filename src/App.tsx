@@ -3,11 +3,17 @@ import DataStreamer, { ServerRespond } from './DataStreamer';
 import Graph from './Graph';
 import './App.css';
 
+//Global variable to store the update interval's ID.
+let update: NodeJS.Timeout;
+
 /**
  * State declaration for <App />
  */
 interface IState {
   data: ServerRespond[],
+
+  //Boolean that displays or hides graph.
+  showGraph: boolean,
 }
 
 /**
@@ -22,6 +28,9 @@ class App extends Component<{}, IState> {
       // data saves the server responds.
       // We use this state to parse data down to the child element (Graph) as element property
       data: [],
+
+      //Graph is hidden at the beginning.
+      showGraph: false,
     };
   }
 
@@ -29,18 +38,34 @@ class App extends Component<{}, IState> {
    * Render Graph react component with state.data parse as property data
    */
   renderGraph() {
-    return (<Graph data={this.state.data}/>)
+
+    //Graph renders when the graph is shown, ie after start streaming is pressed.
+    if (this.state.showGraph) {
+      return (<Graph data={this.state.data}/>)
+    }
   }
 
   /**
    * Get new data from server and update the state with the new data
    */
   getDataFromServer() {
+    let i = 0;
+
+    //Interval to update graph every 100 milliseconds using graphUpdate subroutine.
+    update = setInterval(()=> this.graphUpdate(i), 100);
+  }
+
+  //Gets data from the server and sets the state of App using the data.
+  graphUpdate(i: number) {
     DataStreamer.getData((serverResponds: ServerRespond[]) => {
-      // Update the state by creating a new array of data that consists of
-      // Previous data in the state and the new data from server
-      this.setState({ data: [...this.state.data, ...serverResponds] });
+      this.setState({data: serverResponds, showGraph: true});
     });
+
+    //Stops the updates after 10,000 iterations.
+    i = i + 1;
+    if (i > 10000) {
+      clearInterval(update);
+    }
   }
 
   /**
