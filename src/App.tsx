@@ -6,8 +6,6 @@ import './App.css';
 //Global variable to store the update interval's ID.
 let update: NodeJS.Timeout;
 
-let i = 0;
-
 /**
  * State declaration for <App />
  */
@@ -51,20 +49,21 @@ class App extends Component<{}, IState> {
    * Get new data from server and update the state with the new data
    */
   getDataFromServer() {
+    let i = 0;
 
     //Interval to update graph every 100 milliseconds using graphUpdate subroutine.
-    update = setInterval(()=> this.graphUpdate(), 100);
+    update = setInterval(()=> this.graphUpdate(i), 100);
   }
 
   //Gets data from the server and sets the state of App using the data.
-  graphUpdate() {
+  graphUpdate(i: number) {
     DataStreamer.getData((serverResponds: ServerRespond[]) => {
       this.setState({data: serverResponds, showGraph: true});
     });
 
     //Stops the updates after 10,000 iterations.
     i = i + 1;
-    if (i > 1000) {
+    if (i > 10000) {
       clearInterval(update);
     }
   }
